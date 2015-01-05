@@ -2,7 +2,7 @@ CREATE SCHEMA pos;
 SET SCHEMA pos;
 
 CREATE TABLE transaction_items (
-        id INTEGER
+        id INTEGER primary key
     ,   transaction_id INTEGER
     ,   item_id INTEGER
     ,   unit_price DECIMAL -- customer bought item at that price
@@ -11,26 +11,26 @@ CREATE TABLE transaction_items (
 );
 
 CREATE TABLE transactions (
-        id INTEGER
+        id INTEGER primary key
     ,   store_id INTEGER
     ,   customer_id INTEGER
     ,   timestamp TIMESTAMP
 );
 
 CREATE TABLE stores (
-        id INTEGER
+        id INTEGER primary key
     ,   name VARCHAR(30)
     ,   type VARCHAR(20)
     ,   address VARCHAR(50)
 );
 
 CREATE TABLE customers (
-        id INTEGER
+        id INTEGER primary key
     ,   name VARCHAR(30)
 );
 
 CREATE TABLE items (
-        id INTEGER
+        id INTEGER primary key
     ,   name VARCHAR(50)
     ,   color VARCHAR(20)
     ,   size DECIMAL

@@ -1,0 +1,14 @@
+transaction_items
+1, 1, 1, 19.99, 8.75, 5
+
+transactions
+1, 1, 1, 'Jan 5, 2015 8:17:02.654 PM'
+
+stores
+1, 'Hugo Boss 1', 'offline', '1234 5th Avenue'
+
+customers
+1, 'customer 1'
+
+items
+1, 'item 1', 'blue', 32, 'Jeans'
