@@ -1,21 +1,34 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import os, csv, re
+import os, csv, logging
 from random import randint, paretovariate
 from hanaConnector import HanaConnector
+
+db_config = {
+    "address": "localhost",
+    "port": 30515,
+    "user": "SYSTEM",
+    "password": "manager",
+    "autocommit": True
+}
+
+DEFAULT_SIZES = {
+    'customers': 100,
+    'stores': 200,
+    'items': 500,
+    'transactions': 10000,
+    'transaction_items': 50000
+}
 
 GENERATOR_PATH = os.path.join(os.path.dirname(__file__) + "/generated_data")
 if not os.path.exists(GENERATOR_PATH):
     os.makedirs(GENERATOR_PATH)
 
-db_config = {
-    "address": "localhost",
-    "port": 30115,
-    "user": "SYSTEM",
-    "password": "manager",
-    "autocommit": True
-}
+log = logging.getLogger("Generator")
+handler = logging.StreamHandler()
+log.setLevel(logging.INFO)
+log.addHandler(handler)
 
 con = HanaConnector(db_config)
 
@@ -56,14 +69,15 @@ class TableGenerator(object):
     def __init__(self, **options):
         self.table = None
         self.scale_factor = int(options["scale_factor"])
-        self.num_records = self.scale_factor * self.tablename
+        self.default_size = DEFAULT_SIZES[self.tablename]
+        self.num_records = self.scale_factor * self.default_size
         self.initialize_table()
         self.writer = FileWriter([f.name for f in self.table.fields])
 
     def generate(self):
         log.info("Working on %s with %s" % (self.tablename, self.scale_factor))
         self.generate_ctl_file()
-        self.generate_csv_file(self.scale_factor)
+        self.generate_csv_file()
         # if not self.generate_only:
         #     self.import_data()
 
@@ -102,7 +116,7 @@ class TableGenerator(object):
     @property
     def base_name(self):
         if not hasattr(self, '_basename'):
-            self._basename = os.path.join(GENERATOR_PATH, "_".join([self.tablename.lower(), str(self.records)]))
+            self._basename = os.path.join(GENERATOR_PATH, "_".join([self.tablename.lower(), str(self.scale_factor)]))
         return self._basename
 
     @property
@@ -133,13 +147,13 @@ class TableGenerator(object):
     def save_row(self, row):
         self.writer.save_row(row, self.csv_fname)
 
-    def generate_csv_file(self, scale_factor):
+    def generate_csv_file(self):
         log.info("Generating csv file")
-        for row in self.generate_csv_rows(generate_csv_file):
+        for row in self.generate_csv_rows():
             self.save_row(row)
         self.writer.close()
 
-    def generate_csv_rows(self, num_records):
+    def generate_csv_rows(self):
         pass
 
     def import_data(self):

@@ -8,7 +8,7 @@ def main():
         'scale_factor': 1
     }
 
-    generate_data(options)
+    generate_data(**options)
 
 if __name__ == '__main__':
     main()
