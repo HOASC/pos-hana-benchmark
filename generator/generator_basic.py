@@ -133,7 +133,7 @@ class TableGenerator(object):
     def generate_ctl_file(self):
         log.info("Generating ctl file")
         with open(self.ctl_fname, 'w') as ctl_file:
-            ctl = """IMPORT FROM CSV FILE '{infile} INTO {table}
+            ctl = """IMPORT FROM CSV FILE '{infile}' INTO {table}
             WITH
             RECORD DELIMITED BY '\n'
             FIELD DELIMITED BY ','

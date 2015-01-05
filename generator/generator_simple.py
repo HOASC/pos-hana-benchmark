@@ -100,6 +100,7 @@ class TransactionsGenerator(TableGenerator):
         'ID': 1,
         'STORE_ID': 1,
         'CUSTOMER_ID': 1,
+        'TYPE': 'online',
         'TIMESTAMP': 'Jan 5, 2015 8:17:02.654 PM'
     }
     """
@@ -107,12 +108,14 @@ class TransactionsGenerator(TableGenerator):
     tablename = "transactions"
 
     def generate_csv_rows(self):
+        time_start = datetime.utcnow()-datetime.timedelta(weeks=10)
         for i in xrange(1, self.num_records + 1):
             row = {
                     'ID': i,
                     'STORE_ID': randint(1, 100),
                     'CUSTOMER_ID': randint(1, 100),
-                    'TIMESTAMP': str(datetime.today())
+                    'TYPE': STORE_TYPES[randint(0, len(STORE_TYPES)-1)],
+                    'TIMESTAMP': str(time_start+datetime.timedelta(seconds=i))
                   }
             yield row
 
