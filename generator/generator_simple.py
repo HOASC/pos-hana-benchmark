@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from random import random, randint, paretovariate
-from generator.generator_basic import TableGenerator, DISTR_FUNC
+from random import random, randint
+from generator.generator_basic import TableGenerator
 from datetime import datetime, timedelta
 
 STORE_TYPES = ['online', 'instore']

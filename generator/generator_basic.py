@@ -2,8 +2,12 @@
 # encoding: utf-8
 
 import os, csv, logging
-from random import randint, paretovariate
 from hanaConnector import HanaConnector
+
+log = logging.getLogger("Generator")
+handler = logging.StreamHandler()
+log.setLevel(logging.INFO)
+log.addHandler(handler)
 
 db_config = {
     "address": "localhost",
@@ -13,42 +17,19 @@ db_config = {
     "autocommit": True
 }
 
+con = HanaConnector(db_config)
+
 DEFAULT_SIZES = {
-    'customers': 100,
+    'customer': 100,
     'stores': 200,
     'items': 500,
-    'transactions': 10000,
-    'transaction_items': 50000
+    'transactions': 20000,
+    'transaction_items': 100000
 }
 
 GENERATOR_PATH = os.path.join(os.path.dirname(__file__) + "/generated_data")
 if not os.path.exists(GENERATOR_PATH):
     os.makedirs(GENERATOR_PATH)
-
-log = logging.getLogger("Generator")
-handler = logging.StreamHandler()
-log.setLevel(logging.INFO)
-log.addHandler(handler)
-
-con = HanaConnector(db_config)
-
-def uniform(start, stop):
-    return randint(start, stop)
-
-def pareto(start, stop):
-    return int(start - 1 + paretovariate(1.2))
-
-# start stop is ignored. This will generate exactly THREE products!
-def paretocontrolled(start, stop):
-    rndnum = randint(1,100)
-    if (rndnum <= 80):  # highly used product
-        return 0
-    elif (rndnum <= 95):  # medium used product
-        return 1
-    else:  # low used product
-        return 2
-
-DISTR_FUNC = { "uniform": uniform, "pareto": pareto, "paretocontrolled": paretocontrolled }
 
 
 class Table(object):
@@ -79,7 +60,7 @@ class TableGenerator(object):
         self.generate_ctl_file()
         self.generate_csv_file()
         # if not self.generate_only:
-        #     self.import_data()
+        self.import_data()
 
     def initialize_table(self):
         # if self.table_exists():

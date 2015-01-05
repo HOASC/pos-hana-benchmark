@@ -5,7 +5,7 @@ from generator.generator_simple import generate as generate_data
 
 def main():
     options = {
-        'scale_factor': 1
+        'scale_factor': 10
     }
 
     generate_data(**options)
