@@ -3,7 +3,7 @@
 
 from random import random, randint, paretovariate
 from generator.generator_basic import TableGenerator, DISTR_FUNC
-from datetime import datetime
+from datetime import datetime, timedelta
 
 STORE_TYPES = ['online', 'instore']
 COLORS = ['white', 'yellow', 'orange', 'red', 'brown', 'green', 'blue', 'grey', 'purple', 'black']
@@ -108,14 +108,14 @@ class TransactionsGenerator(TableGenerator):
     tablename = "transactions"
 
     def generate_csv_rows(self):
-        time_start = datetime.utcnow()-datetime.timedelta(weeks=10)
+        time_start = datetime.utcnow()-timedelta(weeks=10)
         for i in xrange(1, self.num_records + 1):
             row = {
                     'ID': i,
                     'STORE_ID': randint(1, 100),
                     'CUSTOMER_ID': randint(1, 100),
                     'TYPE': STORE_TYPES[randint(0, len(STORE_TYPES)-1)],
-                    'TIMESTAMP': str(time_start+datetime.timedelta(seconds=i))
+                    'TIMESTAMP': str(time_start+timedelta(seconds=i))
                   }
             yield row
 
