@@ -1,5 +1,5 @@
 -- get customer stats
-WITH customer_transactions AS (
+CREATE VIEW customer_transactions AS (
     -- select all transaction items, group them up to get some transaction stats
     SELECT
         transaction_id
@@ -33,8 +33,8 @@ WITH customer_transactions AS (
             ,   transactions.timestamp           AS transactions__timestamp
             ,   transactions.id                  AS transactions__id
             -- these are generated from the filters
-            FROM (select "transaction_items"."id", "transaction_items"."transaction_id", "transaction_items"."item_id", "transaction_items"."quantity", ( unit_price ) as "unit_price", ( (unit_price) * quantity ) as "price" from "transaction_items") transaction_items
-            JOIN (select "transactions".* from "transactions" where "transactions"."type" = 'instore') transactions
+            FROM (select transaction_items.id, transaction_items.transaction_id, transaction_items.item_id, transaction_items.quantity, ( unit_price ) as unit_price, ( (unit_price) * quantity ) as price from transaction_items) transaction_items
+            JOIN (select transactions.* from transactions where transactions.type = 'instore') transactions
               ON transactions.id = transaction_items.transaction_id
         ) fact
     ) t
@@ -42,7 +42,7 @@ WITH customer_transactions AS (
         transaction_id
     ,   timestamp
     ,   customer_id
-)
+);
 
 SELECT
     *
@@ -75,4 +75,4 @@ FROM (
         GROUP BY
             customer_id
     ) t
-) t
+) t;

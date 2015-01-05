@@ -14,9 +14,71 @@ DEFAULT_SIZES = {
     'customer': 100,
     'stores': 200,
     'items': 500,
-    'transactions': 10000,
-    'transaction_items': 50000
+    'transactions': 20000,
+    'transaction_items': 100000
 }
+
+
+class TransactionsGenerator(TableGenerator):
+    """ Create data for transactions
+
+    Example data
+    {
+        'ID': 1,
+        'STORE_ID': 1,
+        'CUSTOMER_ID': 1,
+        'TYPE': 'online',
+        'TIMESTAMP': 'Jan 5, 2015 8:17:02.654 PM'
+    }
+    """
+
+    tablename = "transactions"
+
+    def generate_csv_rows(self):
+        time_start = datetime.utcnow()-timedelta(weeks=10)
+        for i in xrange(1, self.num_records + 1):
+            row = {
+                    'ID': i,
+                    'STORE_ID': randint(1, 100),
+                    'CUSTOMER_ID': randint(1, 100),
+                    'TYPE': STORE_TYPES[randint(0, len(STORE_TYPES)-1)],
+                    'TIMESTAMP': str(time_start+timedelta(seconds=i))
+                  }
+            yield row
+
+
+class TransactionsItemsGenerator(TableGenerator):
+    """ Create data for transactions items
+
+    Example data
+    {
+        'ID': 1,
+        'TRANSACTION_ID': 1,
+        'ITEM_ID': 1,
+        'UNIT_PRICE': 1.99,
+        'UNIT_COST': 0.99,
+        'QUANTITY': 5
+    }
+    """
+
+    tablename = "transaction_items"
+    num_transactions = DEFAULT_SIZES['transactions']
+
+    def generate_csv_rows(self):
+        counter = 1
+        for i in xrange(1, num_transactions + 1):
+            for j in xrange(1, randint(1, 10)):
+                price = random() + randint(15, 50)
+                row = {
+                        'ID': counter,
+                        'TRANSACTION_ID': i,
+                        'ITEM_ID': randint(1, 500),
+                        'UNIT_PRICE': '%.2f' % price,
+                        'UNIT_COST': '%.2f' % (price / ( 1 + (float(randint(5,25)) / 100))), # create a margin between 5% and 25%
+                        'QUANTITY': randint(1, 5)
+                      }
+                counter += 1
+                yield row
 
 
 class CustomersGenerator(TableGenerator):
@@ -88,64 +150,6 @@ class ItemsGenerator(TableGenerator):
                     'COLOR': COLORS[randint(0, len(COLORS)-1)],
                     'SIZE': SIZES[randint(0, len(SIZES)-1)],
                     'CATEGORY': CATEGORIES[randint(0, len(CATEGORIES)-1)]
-                  }
-            yield row
-
-
-class TransactionsGenerator(TableGenerator):
-    """ Create data for transactions
-
-    Example data
-    {
-        'ID': 1,
-        'STORE_ID': 1,
-        'CUSTOMER_ID': 1,
-        'TYPE': 'online',
-        'TIMESTAMP': 'Jan 5, 2015 8:17:02.654 PM'
-    }
-    """
-
-    tablename = "transactions"
-
-    def generate_csv_rows(self):
-        time_start = datetime.utcnow()-timedelta(weeks=10)
-        for i in xrange(1, self.num_records + 1):
-            row = {
-                    'ID': i,
-                    'STORE_ID': randint(1, 100),
-                    'CUSTOMER_ID': randint(1, 100),
-                    'TYPE': STORE_TYPES[randint(0, len(STORE_TYPES)-1)],
-                    'TIMESTAMP': str(time_start+timedelta(seconds=i))
-                  }
-            yield row
-
-
-class TransactionsItemsGenerator(TableGenerator):
-    """ Create data for transactions items
-
-    Example data
-    {
-        'ID': 1,
-        'TRANSACTION_ID': 1,
-        'ITEM_ID': 1,
-        'UNIT_PRICE': 1.99,
-        'UNIT_COST': 0.99,
-        'QUANTITY': 5
-    }
-    """
-
-    tablename = "transaction_items"
-
-    def generate_csv_rows(self):
-        for i in xrange(1, self.num_records + 1):
-            price = random() + randint(15, 50)
-            row = {
-                    'ID': i,
-                    'TRANSACTION_ID': randint(1, 10000),
-                    'ITEM_ID': randint(1, 500),
-                    'UNIT_PRICE': '%.2f' % price,
-                    'UNIT_COST': '%.2f' % (price / ( 1 + (float(randint(5,25)) / 100))),
-                    'QUANTITY': randint(1, 5)
                   }
             yield row
 
