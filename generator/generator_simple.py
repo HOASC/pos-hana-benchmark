@@ -5,7 +5,7 @@ from random import random, randint, paretovariate
 from generator.generator_basic import TableGenerator, DISTR_FUNC
 from datetime import datetime
 
-STORE_TYPES = ['online', 'offline']
+STORE_TYPES = ['online', 'instore']
 COLORS = ['white', 'yellow', 'orange', 'red', 'brown', 'green', 'blue', 'grey', 'purple', 'black']
 SIZES = range(1, 30)
 CATEGORIES = ['Jeans', 'Socks', 'TShirts', 'Shoes']

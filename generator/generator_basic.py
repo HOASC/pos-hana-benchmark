@@ -133,14 +133,16 @@ class TableGenerator(object):
     def generate_ctl_file(self):
         log.info("Generating ctl file")
         with open(self.ctl_fname, 'w') as ctl_file:
-            ctl = """IMPORT DATA INTO TABLE {table}
-            FROM '{infile}'
+            ctl = """IMPORT FROM CSV FILE '{infile} INTO {table}
+            WITH
             RECORD DELIMITED BY '\n'
             FIELD DELIMITED BY ','
             ERROR LOG '{badfile}'
             """.format(table=self.table.name,
                        infile=self.csv_fname,
                        badfile=self.tablename.lower() + '.bad')
+
+            print ctl
             ctl_file.write(ctl)
             ctl_file.close()
 
