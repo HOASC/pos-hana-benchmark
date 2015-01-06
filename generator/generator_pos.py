@@ -36,11 +36,13 @@ class TransactionsGenerator(TableGenerator):
 
     def generate_csv_rows(self):
         time_start = datetime.utcnow()-timedelta(weeks=10)
+        num_stores = DEFAULT_SIZES['stores'] * self.scale_factor
+        num_customers = DEFAULT_SIZES['customers'] * self.scale_factor
         for i in xrange(1, self.num_records + 1):
             row = {
                     'ID': i,
-                    'STORE_ID': randint(1, 100),
-                    'CUSTOMER_ID': randint(1, 100),
+                    'STORE_ID': randint(1, num_stores),
+                    'CUSTOMER_ID': randint(1, num_customers),
                     'TYPE': STORE_TYPES[randint(0, len(STORE_TYPES)-1)],
                     'TIMESTAMP': str(time_start+timedelta(seconds=i))
                   }
@@ -62,17 +64,18 @@ class TransactionsItemsGenerator(TableGenerator):
     """
 
     tablename = "transaction_items"
-    num_transactions = DEFAULT_SIZES['transactions']
 
     def generate_csv_rows(self):
+        self.num_transactions = DEFAULT_SIZES['transactions'] * self.scale_factor
+        num_items = DEFAULT_SIZES['items'] * self.scale_factor
         counter = 1
-        for i in xrange(1, num_transactions + 1):
+        for i in xrange(1, self.num_transactions + 1):
             for j in xrange(1, randint(1, 10)):
                 price = random() + randint(15, 50)
                 row = {
                         'ID': counter,
                         'TRANSACTION_ID': i,
-                        'ITEM_ID': randint(1, 500),
+                        'ITEM_ID': randint(1, num_items),
                         'UNIT_PRICE': '%.2f' % price,
                         'UNIT_COST': '%.2f' % (price / ( 1 + (float(randint(5,25)) / 100))), # create a margin between 5% and 25%
                         'QUANTITY': randint(1, 5)

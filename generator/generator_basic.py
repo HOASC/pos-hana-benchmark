@@ -20,7 +20,7 @@ db_config = {
 con = HanaConnector(db_config)
 
 DEFAULT_SIZES = {
-    'customer': 100,
+    'customers': 100,
     'stores': 200,
     'items': 500,
     'transactions': 20000,
@@ -59,8 +59,7 @@ class TableGenerator(object):
         log.info("Working on %s with %s" % (self.tablename, self.scale_factor))
         self.generate_ctl_file()
         self.generate_csv_file()
-        # if not self.generate_only:
-        self.import_data()
+        # self.import_data()
 
     def initialize_table(self):
         # if self.table_exists():
@@ -123,7 +122,6 @@ class TableGenerator(object):
                        infile=self.csv_fname,
                        badfile=self.tablename.lower() + '.bad')
 
-            print ctl
             ctl_file.write(ctl)
             ctl_file.close()
 
@@ -143,7 +141,7 @@ class TableGenerator(object):
         self.delete_table_content()
         log.info("Loading...")
         c = self.connection
-        c.execute("IMPORT FROM '%s' WITH THREADS 10 BATCH 30000" % self.ctl_fname)
+        c.execute("IMPORT FROM '%s' WITH THREADS 4 BATCH 30000" % self.ctl_fname)
         log.info("Done")
 
 class FileWriter(object):
