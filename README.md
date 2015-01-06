@@ -43,10 +43,10 @@ There are two files in the generator folder, one file containing the basic gener
 
 ## Results
 
-* Scale Factor 100 (19Mio transaction items, 2Mio transactions)
+* Scale Factor 100 (19Mio transaction items -> 665MB csv file, 2Mio transactions -> 102MB csv file)
   * Average Time: 0.827041
   * [0.81100010871887207, 0.81727099418640137, 0.81864404678344727, 0.82291293144226074, 0.82594799995422363, 0.82802987098693848, 0.82954597473144531, 0.83091306686401367, 0.8407599925994873, 0.84538006782531738]
-* Scale Factor 10 (1.9Mio transaction items, 200k transactions)
+* Scale Factor 10 (1.9Mio transaction items -> 61MB csv file, 200k transactions -> 9.6MB csv file)
   * Average Time: 0.099740
   * [0.093641996383666992, 0.096506834030151367, 0.097066879272460938, 0.097069025039672852, 0.097651004791259766, 0.098144054412841797, 0.099153041839599609, 0.099488973617553711, 0.10074210166931152, 0.11793303489685059]
 * Scale Factor 1 (190k transaction items, 20k transactions)
