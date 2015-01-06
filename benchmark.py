@@ -53,14 +53,15 @@ query = """
 def run():
     runtimes = []
 
+    print 'Starting Benchmark'
     for i in xrange(RUNS):
         t_start = time()
         connection.execute(query)
         t_end = time()
         runtimes.append( t_end - t_start )
 
-    print runtimes
-    print "Average Time: %d" % (sum(runtimes) / len(runtimes))
+    print runtimes.sort()
+    print "Average Time: %f" % (sum(runtimes) / len(runtimes))
 
 def generate():
     options = {
@@ -71,5 +72,5 @@ def generate():
 
 if __name__ == '__main__':
     generate()
-    run()
+    #run()
 

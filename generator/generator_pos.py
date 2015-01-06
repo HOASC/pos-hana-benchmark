@@ -11,7 +11,7 @@ SIZES = range(1, 30)
 CATEGORIES = ['Jeans', 'Socks', 'TShirts', 'Shoes']
 
 DEFAULT_SIZES = {
-    'customer': 100,
+    'customers': 100,
     'stores': 200,
     'items': 500,
     'transactions': 20000,
@@ -70,7 +70,7 @@ class TransactionsItemsGenerator(TableGenerator):
         num_items = DEFAULT_SIZES['items'] * self.scale_factor
         counter = 1
         for i in xrange(1, self.num_transactions + 1):
-            for j in xrange(1, randint(1, 10)):
+            for j in xrange(1, randint(1, 20)):
                 price = random() + randint(15, 50)
                 row = {
                         'ID': counter,
