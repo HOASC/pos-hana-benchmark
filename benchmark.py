@@ -60,7 +60,9 @@ def run():
         t_end = time()
         runtimes.append( t_end - t_start )
 
-    print runtimes.sort()
+    runtimes.sort()
+
+    print runtimes
     print "Average Time: %f" % (sum(runtimes) / len(runtimes))
 
 def generate():
