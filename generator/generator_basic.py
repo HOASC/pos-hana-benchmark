@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import os, csv, logging
-from hanaConnector import HanaConnector
+import os, csv, re, logging
 
 log = logging.getLogger("Generator")
 handler = logging.StreamHandler()
@@ -17,7 +16,15 @@ db_config = {
     "autocommit": True
 }
 
-con = HanaConnector(db_config)
+HANA_CONNECTION = False
+
+try:
+    from hanaConnector import HanaConnector
+    con = HanaConnector(db_config)
+    HANA_CONNECTION = True
+except ImportError:
+    con = None
+    print 'working without database'
 
 DEFAULT_SIZES = {
     'customers': 100,
@@ -33,9 +40,22 @@ if not os.path.exists(GENERATOR_PATH):
 
 
 class Table(object):
-    def __init__(self, name):
+    def __init__(self, name, create_statement):
         self.name = name
+        self.create_statement = create_statement
         self.fields = []
+        self.extract_fields()
+
+    def extract_fields(self):
+        """ extract all column names from the create statement """
+        match_columns = re.search(r'CREATE COLUMN TABLE \w+ \((.+)\)', self.create_statement)
+        if match_columns:
+            field_string = match_columns.group(1)
+            field_string_splitted = field_string.split(',')
+            for s in field_string_splitted:
+                match_column = re.search(r' *([a-z]*_?[a-z]+) \w+', s)
+                if match_column:
+                    self.fields.append(Field(match_column.group(1).upper()))
 
 
 class Field(object):
@@ -45,6 +65,7 @@ class Field(object):
 
 class TableGenerator(object):
     connection = con
+    schema_dict = {}
     tablename = None
 
     def __init__(self, **options):
@@ -56,7 +77,7 @@ class TableGenerator(object):
         self.writer = FileWriter([f.name for f in self.table.fields])
 
     def generate(self):
-        log.info("Working on %s with %s" % (self.tablename, self.scale_factor))
+        log.info("Working on %s with SCALE_FACTOR %s" % (self.tablename, self.scale_factor))
         self.generate_ctl_file()
         self.generate_csv_file()
         # self.import_data()
@@ -65,16 +86,18 @@ class TableGenerator(object):
         # if self.table_exists():
         #     self.delete_table_content()
 
-        self.table = Table(self.tablename)
-        attr_list = self.connection.query_assoc('''SELECT
-                                       COLUMN_NAME as "column_name"
-                                  FROM "SYS"."COLUMNS"
-                                  WHERE SCHEMA_NAME=:schema
-                                  AND TABLE_NAME=:table
-                                  ORDER BY POSITION''', schema=self.connection.schema, table=self.tablename.upper())
-        assert attr_list, "Tables %s does not exist" % self.tablename
-        for attr in attr_list:
-            self.table.fields.append(Field(**attr))
+        self.table = Table(self.tablename, self.schema_dict[self.tablename])
+        if HANA_CONNECTION:
+            attr_list = self.connection.query_assoc('''SELECT
+                                           COLUMN_NAME as "column_name"
+                                      FROM "SYS"."COLUMNS"
+                                      WHERE SCHEMA_NAME=:schema
+                                      AND TABLE_NAME=:table
+                                      ORDER BY POSITION''', schema=self.connection.schema, table=self.tablename.upper())
+            assert attr_list, "Tables %s does not exist" % self.tablename
+
+        # for attr in attr_list:
+        #     self.table.fields.append(Field(**attr))
 
     def table_exists(self):
         return True if (self.connection.query('''SELECT TABLE_NAME FROM SYS.TABLES
@@ -92,6 +115,20 @@ class TableGenerator(object):
 
     def delete_table_content(self):
         self.connection.execute('TRUNCATE TABLE %s' % self.tablename)
+
+    @classmethod
+    def parse_schema(cls):
+        schema_file_name = './schema.sql'
+        with open(schema_file_name, 'r') as s_file:
+            complete_sql = s_file.read()
+            complete_sql = complete_sql.replace('\n', '')
+            all_statements = complete_sql.split(';')
+            for statement in all_statements:
+                match = re.search(r'TABLE \W*(\w+)\W*', statement)
+                if match:
+                    tablename = match.group(1)
+                    cls.schema_dict[tablename] = statement
+            s_file.close()
 
     @property
     def base_name(self):

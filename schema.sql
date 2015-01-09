@@ -6,8 +6,8 @@ CREATE COLUMN TABLE transaction_items (
         id INTEGER primary key
     ,   transaction_id INTEGER
     ,   item_id INTEGER
-    ,   unit_price DECIMAL -- customer bought item at that price
-    ,   unit_cost DECIMAL -- item cost retailer that much at that time
+    ,   unit_price DECIMAL
+    ,   unit_cost DECIMAL
     ,   quantity INTEGER
 );
 

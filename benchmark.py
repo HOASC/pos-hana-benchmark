@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from generator.generator_pos import generate as generate_data
 from time import time
 from hanaConnector import HanaConnector
 
@@ -13,7 +12,6 @@ db_config = {
     "autocommit": True
 }
 
-SCALE_FACTOR = 100
 RUNS = 10
 
 connection = HanaConnector(db_config)
@@ -65,14 +63,7 @@ def run():
     print runtimes
     print "Average Time: %f" % (sum(runtimes) / len(runtimes))
 
-def generate():
-    options = {
-        'scale_factor': SCALE_FACTOR
-    }
-
-    generate_data(**options)
 
 if __name__ == '__main__':
-    generate()
-    #run()
+    run()
 

@@ -27,6 +27,14 @@ The benchmark.py contains a data generation section and the benchmark for the qu
 There are two files in the generator folder, one file containing the basic generator class with all required functions to create csv files. The other file contains a class for each table with some data creation logic.
 
 
+## HowTo Data Generator
+
+* open data_generator.py
+* adjust SCALE_FACTOR
+* run python data_generator.py
+* output is found in generator/generated_data/
+
+
 ## Stats
 
 * Intel Xeon CPU E5450 @ 3.00GHz

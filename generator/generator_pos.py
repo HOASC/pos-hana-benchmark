@@ -159,6 +159,8 @@ class ItemsGenerator(TableGenerator):
 
 def generate(**options):
     # print options
+    TableGenerator.parse_schema()
+
     GENERATORS = [CustomersGenerator(**options), StoresGenerator(**options), ItemsGenerator(**options), TransactionsGenerator(**options), TransactionsItemsGenerator(**options)]
     for generator in GENERATORS:
         generator.generate()
