@@ -7,8 +7,8 @@ from hanaConnector import HanaConnector
 db_config = {
     "address": "localhost",
     "port": 30515,
-    "user": "SYSTEM",
-    "password": "manager",
+    "user": "",
+    "password": "",
     "autocommit": True
 }
 
