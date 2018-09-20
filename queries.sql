@@ -1,4 +1,5 @@
 -- get customer stats
+set schema POS;
 CREATE VIEW customer_transactions AS (
     -- select all transaction items, group them up to get some transaction stats
     SELECT
